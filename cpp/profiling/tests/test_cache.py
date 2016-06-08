@@ -2,8 +2,8 @@ import tempfile
 import numpy as np
 import unittest
 from mock import Mock, patch, call, sentinel
-import cpa.util
-from cpa.profiling import cache
+import cpp.util
+from cpp.profiling import cache
 
 def test_make_progress_bar_no_text():
     p = cache.make_progress_bar()
@@ -107,12 +107,12 @@ class RobustLinearNormalizationTestCase(unittest.TestCase):
         self.n._create_cache_colmask.assert_called_once_with(predicate)
 
     def test_get_controls(self):
-        with patch('cpa.properties') as properties:
+        with patch('cpp.properties') as properties:
             properties.plate_id = 'PlateName'
             properties.image_table = 'ImageTable'
-            with patch('cpa.dbconnect') as dbconnect:
+            with patch('cpp.dbconnect') as dbconnect:
                 dbconnect.image_key_columns.return_value = ['TableNumber', 'ImageNumber']
-                with patch('cpa.db') as db:
+                with patch('cpp.db') as db:
                     db.execute.return_value = [['p1', 1, 42],
                                                ['p2', 0, 11],
                                                ['p1', 3, 14]]
@@ -157,7 +157,7 @@ class RobustLinearNormalizationTestCase(unittest.TestCase):
         self.c.load.return_value = (np.zeros((0,0)),)
         self.c.colnames = ['Foo', 'Bar', 'Baz']
         with tempfile.NamedTemporaryFile(suffix='.npy') as file:
-            with patch('cpa.profiling.cache.logger') as logger:
+            with patch('cpp.profiling.cache.logger') as logger:
                 logger.warning = Mock()
                 self.n._create_cache_percentiles_1('p1', [(1, 12), (0, 11)], 
                                                    file.name)
@@ -172,8 +172,8 @@ class RobustLinearNormalizationTestCase(unittest.TestCase):
                                                file.name)
             self.assertArrayEqual(np.load(file.name), percentiles)
 
-    @patch('cpa.profiling.cache.make_progress_bar')
-    @patch('cpa.profiling.cache._check_directory')
+    @patch('cpp.profiling.cache.make_progress_bar')
+    @patch('cpp.profiling.cache._check_directory')
     def test_create_cache_percentiles(self, check_directory, make_progress_bar):
         controls = {'p1': [(1, 42), (3, 14)],
                     'p2': [(0, 11)],
@@ -220,7 +220,7 @@ class CacheTestCase(unittest.TestCase):
         c = cache.Cache('foo')
         original = dict(foo=42)
         with tempfile.NamedTemporaryFile(suffix='.pickle') as file:
-            cpa.util.pickle(file.name, original)
+            cpp.util.pickle(file.name, original)
             c._plate_map_filename = file.name
             self.assertEqual(c._cached_plate_map, None)
             first = c._plate_map
@@ -249,9 +249,9 @@ class CacheTestCase(unittest.TestCase):
     # TODO: test_create_cache_colnames
 
     @patch.object(cache.Cache, '__init__')
-    @patch('cpa.util.pickle')
-    @patch('cpa.db.execute')
-    @patch('cpa.dbconnect.image_key_columns')
+    @patch('cpp.util.pickle')
+    @patch('cpp.db.execute')
+    @patch('cpp.dbconnect.image_key_columns')
     def test_create_cache_plate_map(self, image_key_columns, execute, pickle, 
                                     init):
         image_key_columns = ('TableNumber', 'ImageNumber')
@@ -267,7 +267,7 @@ class CacheTestCase(unittest.TestCase):
                                         (0, 11): 'p2',
                                         (3, 14): 'p1'})
 
-    @patch('cpa.profiling.cache.make_progress_bar')
+    @patch('cpp.profiling.cache.make_progress_bar')
     @patch.object(cache.Cache, '_plate_map')
     def test_create_cache_features(self, plate_map, make_progress_bar):
         cache_dir = tempfile.mkdtemp()

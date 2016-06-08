@@ -5,7 +5,7 @@ from optparse import OptionParser
 import progressbar
 import numpy as np
 import mdp.nodes as nodes
-import cpa.util
+import cpp.util
 from .cache import Cache
 from .preprocessing import Preprocessor, VariableSelector
 
@@ -66,7 +66,7 @@ def kaiser(data):
 def _main(args=None):
     # Import the module under its full name so the class can be found
     # when unpickling.
-    import cpa.profiling.factor_analysis
+    import cpp.profiling.factor_analysis
 
     logging.basicConfig(level=logging.DEBUG)
  
@@ -81,13 +81,13 @@ def _main(args=None):
     nfactors = int(args[1])
     output_file = args[2]
 
-    subsample = cpa.util.unpickle1(subsample_file)
+    subsample = cpp.util.unpickle1(subsample_file)
     print kaiser(subsample.data)
-    preprocessor = cpa.profiling.factor_analysis.FactorAnalysisPreprocessor(
+    preprocessor = cpp.profiling.factor_analysis.FactorAnalysisPreprocessor(
         standardize(subsample.data), subsample.variables, nfactors)
     if options.variable_selection_only:
         preprocessor = preprocessor.get_variable_selector()
-    cpa.util.pickle(output_file, preprocessor)
+    cpp.util.pickle(output_file, preprocessor)
 
 if __name__ == '__main__':
     _main()

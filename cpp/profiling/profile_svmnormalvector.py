@@ -11,8 +11,8 @@ from optparse import OptionParser
 import numpy as np
 import time
 import itertools
-import cpa
-import cpa.util
+import cpp
+import cpp.util
 from .cache import Cache
 from .normalization import RobustLinearNormalization, normalizations
 from .profiles import Profiles, add_common_options
@@ -58,12 +58,12 @@ class memoized(object):
     def __call__(self, *args):
         filename = os.path.join(self.dir, hashlib.sha1(pickle.dumps(args)).hexdigest())
         try:
-            value = cpa.util.unpickle(filename)[0]
+            value = cpp.util.unpickle(filename)[0]
             #logger.debug('Using cached value')
             return value
         except IOError:
             value = self.func(*args)
-            cpa.util.pickle(filename, value)
+            cpp.util.pickle(filename, value)
             return value
     def __repr__(self):
         """Return the function's docstring."""
@@ -77,17 +77,17 @@ def _compute_svmnormalvector((cache_dir, images, control_images,
     #try:
         import numpy as np 
         import sys
-        from cpa.profiling.cache import Cache
-        from cpa.profiling.normalization import RobustLinearNormalization, normalizations
+        from cpp.profiling.cache import Cache
+        from cpp.profiling.normalization import RobustLinearNormalization, normalizations
         from sklearn.svm import LinearSVC
-        from cpa.profiling.profile_svmnormalvector import _compute_rfe
+        from cpp.profiling.profile_svmnormalvector import _compute_rfe
 
         cache = Cache(cache_dir)
         normalization = normalizations[normalization_name]
         normalizeddata, normalized_colnames, _ = cache.load(images, normalization=normalization)
         control_data, control_colnames, _ = cache.load(control_images, normalization=normalization)
         if preprocess_file:
-            preprocessor = cpa.util.unpickle1(preprocess_file)
+            preprocessor = cpp.util.unpickle1(preprocess_file)
             normalizeddata = preprocessor(normalizeddata)
             control_data = preprocessor(control_data)
         assert len(control_data) >= len(normalizeddata)
@@ -108,13 +108,13 @@ def _compute_svmnormalvector((cache_dir, images, control_images,
     #    return None
         
 def images_by_plate(filter):
-    f = cpa.properties._filters[filter]
+    f = cpp.properties._filters[filter]
     d = {}
-    for row in cpa.db.execute("""
+    for row in cpp.db.execute("""
         SELECT %s, %s FROM %s 
         WHERE substr(Image_Metadata_Well_DAPI from 2 for 2) IN ('02', '11')""" % (
-            cpa.dbconnect.UniqueImageClause(), cpa.properties.plate_id,
-            cpa.properties.image_table)):
+            cpp.dbconnect.UniqueImageClause(), cpp.properties.plate_id,
+            cpp.properties.image_table)):
         plate_name = row[-1]
         imkey = row[:-1]
         d.setdefault(plate_name, []).append(imkey)
@@ -125,11 +125,11 @@ def profile_svmnormalvector(cache_dir, group_name, control_filter,
                             parallel=Uniprocessing(),
                             normalization=RobustLinearNormalization, 
                             preprocess_file=None):
-        group, colnames_group = cpa.db.group_map(group_name, reverse=True, 
+        group, colnames_group = cpp.db.group_map(group_name, reverse=True, 
                                                  filter=filter)
         control_images_by_plate = images_by_plate(control_filter)
         plate_by_image = dict((row[:-2], row[-2])
-                              for row in cpa.db.GetPlatesAndWellsPerImage())
+                              for row in cpp.db.GetPlatesAndWellsPerImage())
 
         def control_images(treated_images):
             return [r for image in treated_images
@@ -141,7 +141,7 @@ def profile_svmnormalvector(cache_dir, group_name, control_filter,
                       for k in keys]
 
         if preprocess_file:
-            preprocessor = cpa.util.unpickle1(preprocess_file)
+            preprocessor = cpp.util.unpickle1(preprocess_file)
             variables = preprocessor.variables
         else:
             cache = Cache(cache_dir)
@@ -180,7 +180,7 @@ if __name__ == '__main__':
         parser.error("-J can only be used with --memoize")
     memoization_dir = options.memoize
 
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
     profiles = profile_svmnormalvector(cache_dir, group, control_filter, 
                                        filter=options.filter, rfe=options.rfe, 
                                        parallel=parallel, job=options.job,

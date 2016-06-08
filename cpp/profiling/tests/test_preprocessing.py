@@ -1,5 +1,5 @@
 from unittest import TestCase
-from cpa.profiling import preprocessing
+from cpp.profiling import preprocessing
 
 class NullPreprocessorTestCase(TestCase):
     def test_init(self):

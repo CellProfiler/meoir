@@ -2,8 +2,8 @@ import re
 import sys
 from optparse import OptionParser
 import numpy as np
-import cpa
-from cpa.util import replace_atomically
+import cpp
+from cpp.util import replace_atomically
 from .profiles import Profiles
 
 def rank_variables(profiles):
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     if len(args) != 2:
         parser.error('Incorrect number of arguments')
     properties_file, profiles_filename = args
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
     profiles = Profiles.load(profiles_filename)
 

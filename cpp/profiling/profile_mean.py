@@ -7,7 +7,7 @@ import logging
 from optparse import OptionParser
 import numpy as np
 from scipy.stats import mode
-import cpa
+import cpp
 from .cache import Cache
 from .normalization import DummyNormalization, RobustLinearNormalization, RobustStdNormalization, normalizations
 from .profiles import Profiles, add_common_options
@@ -17,8 +17,8 @@ def _compute_group_mean((cache_dir, images, normalization_name,
                          preprocess_file, method)):
     try:
         import numpy as np
-        from cpa.profiling.cache import Cache
-        from cpa.profiling.normalization import normalizations
+        from cpp.profiling.cache import Cache
+        from cpp.profiling.normalization import normalizations
         from scipy.stats import norm as Gaussian
         cache = Cache(cache_dir)
         normalization = normalizations[normalization_name]
@@ -37,7 +37,7 @@ def _compute_group_mean((cache_dir, images, normalization_name,
             return np.empty(len(colnames)) * np.nan
 
         if preprocess_file:
-            preprocessor = cpa.util.unpickle1(preprocess_file)
+            preprocessor = cpp.util.unpickle1(preprocess_file)
             data = preprocessor(data)
 
         if method == 'mean':
@@ -78,7 +78,7 @@ def profile_mean(cache_dir, group_name, filter=None, parallel=Uniprocessing(),
                  normalization=RobustLinearNormalization, preprocess_file=None,
                  show_progress=True, method='mean',
                  full_group_header=False):
-    group, colnames_group = cpa.db.group_map(group_name, reverse=True,
+    group, colnames_group = cpp.db.group_map(group_name, reverse=True,
                                              filter=filter)
 
     keys = group.keys()
@@ -93,7 +93,7 @@ def profile_mean(cache_dir, group_name, filter=None, parallel=Uniprocessing(),
         keys = keys[0:DEBUG_NGROUPS]
     
     if preprocess_file:
-        preprocessor = cpa.util.unpickle1(preprocess_file)
+        preprocessor = cpp.util.unpickle1(preprocess_file)
         variables = preprocessor.variables
     else:
         cache = Cache(cache_dir)
@@ -142,7 +142,7 @@ if __name__ == '__main__':
         parser.error('Incorrect number of arguments')
     properties_file, cache_dir, group = args
 
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
     profiles = profile_mean(cache_dir, group, filter=options.filter,
                             parallel=parallel, 

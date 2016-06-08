@@ -52,7 +52,7 @@ class LSFView(object):
             args.extend(['-R', 'rusage[mem=%d]' % int(self.memory)])
         args.extend(['-J', '"%s[1-%d]"' % (self.job_array_name, self.njobs), '-o', 
                      '"%s/out/j%%Ja%%I.out"' % self.directory, sys.executable,
-                     '-m', 'cpa.profiling.lsf', self.directory])
+                     '-m', 'cpp.profiling.lsf', self.directory])
         cmd = ' '.join(args)
         print cmd
         os.system(cmd)

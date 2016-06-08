@@ -2,7 +2,7 @@ import sys
 import itertools
 import logging
 import numpy as np
-import cpa
+import cpp
 from .parallel import ParallelProcessor
 
 # compress is new in Python 2.7
@@ -203,7 +203,7 @@ class Profiles(object):
         lists of image keys.
 
         """
-        input_group_r, input_colnames = cpa.db.group_map(self.group_name, 
+        input_group_r, input_colnames = cpp.db.group_map(self.group_name, 
                                                          reverse=True)
         input_group_r = dict((tuple(map(str, k)), v) 
                              for k, v in input_group_r.items())
@@ -211,7 +211,7 @@ class Profiles(object):
         if group_name is None:
             return input_group_r
         else:
-            group, colnames = cpa.db.group_map(group_name)
+            group, colnames = cpp.db.group_map(group_name)
             #group = dict((v, tuple(map(str, k))) 
             #             for v, k in group.items())
             d = {}

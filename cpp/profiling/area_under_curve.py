@@ -3,7 +3,7 @@
 import sys
 from optparse import OptionParser
 import numpy as np
-import cpa
+import cpp
 from scipy.spatial.distance import cdist, cosine, euclidean, cityblock
 from .profiles import Profiles
 from .confusion import confusion_matrix, write_confusion
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     if len(args) != 3:
         parser.error('Incorrect number of arguments')
     properties_file, profiles_filename, true_group_name = args
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
     if options.csv:
        profiles = Profiles.load_csv(profiles_filename)

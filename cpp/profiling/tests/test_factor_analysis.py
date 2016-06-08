@@ -2,7 +2,7 @@ import numpy as np
 from numpy.testing import assert_almost_equal
 from unittest import TestCase
 from mock import patch, Mock, sentinel
-from cpa.profiling import factor_analysis
+from cpp.profiling import factor_analysis
 
 cars = np.array([[2930, 4099], [3350, 4749], [2640, 3799],
                  [3250, 4816], [4080, 7827]])
@@ -76,9 +76,9 @@ class FactorAnalysisPreprocessorTestCase(TestCase):
         data = np.array([0, 1, 2, 3], dtype='i4')
         assert np.array_equal(sel(data), np.array([0, 3]))
 
-@patch('cpa.util.pickle')
-@patch('cpa.util.unpickle1')
-@patch('cpa.profiling.factor_analysis.FactorAnalysisPreprocessor')
+@patch('cpp.util.pickle')
+@patch('cpp.util.unpickle1')
+@patch('cpp.profiling.factor_analysis.FactorAnalysisPreprocessor')
 def test_main(pclass, unpickle, pickle):
     p = Mock()
     pclass.return_value = p

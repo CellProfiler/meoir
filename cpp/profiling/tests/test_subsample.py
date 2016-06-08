@@ -1,6 +1,6 @@
 import numpy as np
 from mock import Mock, patch, call
-from cpa.profiling import subsample
+from cpp.profiling import subsample
 
 def test_compute_group_subsample():
     cache = Mock()
@@ -11,7 +11,7 @@ def test_compute_group_subsample():
     colnames = ['f1', 'f2', 'f3']
     cache.load.return_value = data, colnames, None
     indices = np.array([0, 2], dtype='i4')
-    with patch.dict('sys.modules', {'cpa.profiling.cache': cache_module}):
+    with patch.dict('sys.modules', {'cpp.profiling.cache': cache_module}):
         r = subsample._compute_group_subsample(('my_cache_dir', 
                                                 None,
                                                 (0, 42), indices))

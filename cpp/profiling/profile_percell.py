@@ -5,7 +5,7 @@ import os
 import logging
 from optparse import OptionParser
 import numpy as np
-import cpa
+import cpp
 from .cache import Cache
 from .normalization import DummyNormalization, RobustLinearNormalization, RobustStdNormalization, normalizations
 from .profiles import Profiles
@@ -57,7 +57,7 @@ def cell_feats(cache_dir, group_name, filter=None, parallel=Uniprocessing(),
                  normalization=RobustLinearNormalization, output_filename=None):
     cache = Cache(cache_dir)
 
-    group, colnames_group = cpa.db.group_map(group_name, reverse=True,
+    group, colnames_group = cpp.db.group_map(group_name, reverse=True,
                                              filter=filter)
     variables = normalization(cache).colnames
 
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         parser.error('Incorrect number of arguments')
     properties_file, cache_dir, group = args
 
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
     cell_feats(cache_dir, group, filter=options.filter,
                parallel=parallel,

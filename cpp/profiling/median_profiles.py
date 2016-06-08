@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #
-# python -m cpa.profiling.median_profiles -o treatment_profiles_mean.txt ~/src/az/properties/supplement.properties well_profiles_mean.txt Well CompoundConcentration
+# python -m cpp.profiling.median_profiles -o treatment_profiles_mean.txt ~/src/az/properties/supplement.properties well_profiles_mean.txt Well CompoundConcentration
 
 import itertools
 import sys
 from optparse import OptionParser
 import numpy as np
-import cpa
+import cpp
 from .profiles import Profiles
 
 def parse_arguments():
@@ -20,10 +20,10 @@ def parse_arguments():
 
 def aggregate_profiles(profiles, group_name, aggregator):
     profiles.assert_not_isnan()
-    input_group_r, input_colnames = cpa.db.group_map(profiles.group_name, reverse=True)
+    input_group_r, input_colnames = cpp.db.group_map(profiles.group_name, reverse=True)
     input_group_r = dict((tuple(map(str, k)), v) 
                          for k, v in input_group_r.items())
-    output_group, output_colnames = cpa.db.group_map(group_name)
+    output_group, output_colnames = cpp.db.group_map(group_name)
 
     d = {}
     for key, vector in profiles.items():
@@ -43,7 +43,7 @@ def median_profiles(profiles, group_name):
 
 if __name__ == '__main__':
     options, (properties_file, input_filename, group_name) = parse_arguments()
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
     if options.csv:
         input_profiles = Profiles.load_csv(input_filename)

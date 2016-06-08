@@ -4,14 +4,14 @@ def _compute_mixture_probabilities((cache_dir, normalization_name,
                                     preprocess_file, images, gmm, meanvector, 
                                     loadings)):
     import numpy as np        
-    from cpa.profiling import cache
+    from cpp.profiling import cache
     cache = Cache(cache_dir)
     normalization = normalizations[normalization_name]
     normalizeddata, normalized_colnames, _ = cache.load(images, normalization=normalization)
     if len(normalizeddata) == 0:
         return np.empty(len(normalized_colnames)) * np.nan
     if preprocess_file:
-        preprocessor = cpa.util.unpickle1(preprocess_file)
+        preprocessor = cpp.util.unpickle1(preprocess_file)
         normalizeddata = preprocessor(normalizeddata)
     if len(normalizeddata) == 0:
         return np.empty(len(normalized_colnames)) * np.nan
@@ -27,7 +27,7 @@ from optparse import OptionParser
 import numpy as np
 from scipy import linalg
 from sklearn.mixture import GMM
-import cpa
+import cpp
 from .cache import Cache
 from normalization import RobustLinearNormalization, normalizations
 from .profiles import Profiles, add_common_options
@@ -37,12 +37,12 @@ def profile_gmm(cache_dir, subsample_file, group_name, ncomponents=50,
                 filter=None, parallel=Uniprocessing(),
                 normalization=RobustLinearNormalization, preprocess_file=None):
     cache = Cache(cache_dir)
-    group, colnames_group = cpa.db.group_map(group_name, reverse=True, filter=filter)
+    group, colnames_group = cpp.db.group_map(group_name, reverse=True, filter=filter)
 
     keys = group.keys()
-    subsample = cpa.util.unpickle1(subsample_file)
+    subsample = cpp.util.unpickle1(subsample_file)
     if preprocess_file:
-        preprocessor = cpa.util.unpickle1(preprocess_file)
+        preprocessor = cpp.util.unpickle1(preprocess_file)
         subsample_data = preprocessor(subsample.data)
     else:
         subsample_data = subsample.data
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     if len(args) != 4:
         parser.error('Incorrect number of arguments')
     properties_file, cache_dir, subsample_file, group_name = args
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
     profiles = profile_gmm(cache_dir, subsample_file, group_name, 
                            ncomponents=options.ncomponents, 

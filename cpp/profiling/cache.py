@@ -3,16 +3,16 @@ Cache of per-well block of per-cell feature data.
 
 Example usage as a script (builds cache and precomputes normalizations):
 
-$ python -m cpa.profiling.cache CDP2.properties /imaging/analysis/2008_12_04_Imaging_CDRP_for_MLPCN/CDP2/cache "Image_Metadata_ASSAY_WELL_ROLE = 'mock'"
+$ python -m cpp.profiling.cache CDP2.properties /imaging/analysis/2008_12_04_Imaging_CDRP_for_MLPCN/CDP2/cache "Image_Metadata_ASSAY_WELL_ROLE = 'mock'"
 
 Example usage as module:
 
->>> import cpa
->>> from cpa.profiling.cache import Cache
->>> from cpa.profiling.normalization import RobustLinearNormalization
->>> cpa.properties.LoadFile('CDP2.properties')
+>>> import cpp
+>>> from cpp.profiling.cache import Cache
+>>> from cpp.profiling.normalization import RobustLinearNormalization
+>>> cpp.properties.LoadFile('CDP2.properties')
 >>> cache = Cache('/imaging/analysis/2008_12_04_Imaging_CDRP_for_MLPCN/CDP2/cache')
->>> cc_mapping, cc_colnames = cpa.db.group_map('CompoundConcentration', reverse=True)
+>>> cc_mapping, cc_colnames = cpp.db.group_map('CompoundConcentration', reverse=True)
 >>> imKeys = cc_mapping.values()[0]
 >>> unnormalized, unnormalized_colnames = cache.load(imKeys)
 >>> normalized, normalized_colnames = cache.load(imKeys, normalization=RobustLinearNormalization)
@@ -27,9 +27,9 @@ from optparse import OptionParser
 import progressbar
 import numpy as np
 from scipy.stats.stats import scoreatpercentile
-import cpa
-import cpa.dbconnect
-import cpa.util
+import cpp
+import cpp.dbconnect
+import cpp.util
 from .normalization import DummyNormalization, normalizations
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ class Cache(object):
     @property
     def _plate_map(self):
         if self._cached_plate_map is None:
-            self._cached_plate_map = cpa.util.unpickle1(self._plate_map_filename)
+            self._cached_plate_map = cpp.util.unpickle1(self._plate_map_filename)
         return self._cached_plate_map
 
     def load_objects(self, object_keys, normalization=DummyNormalization, removeRowsWithNaN=True):
@@ -202,7 +202,7 @@ class Cache(object):
         """Create cache of column names"""
         if resume and os.path.exists(self._colnames_filename):
             return
-        cols = cpa.db.GetColnamesForClassifier()
+        cols = cpp.db.GetColnamesForClassifier()
         with open(self._colnames_filename, 'w') as f:
             for col in cols:
                 print >>f, col
@@ -212,11 +212,11 @@ class Cache(object):
         if resume and os.path.exists(self._plate_map_filename):
             return
         self._cached_plate_map = dict((tuple(row[1:]), row[0])
-                                      for row in cpa.db.execute('select distinct %s, %s from %s'%
-                                                                (cpa.properties.plate_id, 
-                                                                 ', '.join(cpa.dbconnect.image_key_columns()),
-                                                                 cpa.properties.image_table)))
-        cpa.util.pickle(self._plate_map_filename, self._cached_plate_map)
+                                      for row in cpp.db.execute('select distinct %s, %s from %s'%
+                                                                (cpp.properties.plate_id, 
+                                                                 ', '.join(cpp.dbconnect.image_key_columns()),
+                                                                 cpp.properties.image_table)))
+        cpp.util.pickle(self._plate_map_filename, self._cached_plate_map)
 
     def _create_cache_features(self, resume):
         nimages = len(self._plate_map)
@@ -231,12 +231,12 @@ class Cache(object):
         filename = self._image_filename(plate, image_key)
         if resume and os.path.exists(filename):
             return
-        features = cpa.db.execute("""select %s from %s where %s""" % (
-                ','.join(self.colnames), cpa.properties.object_table, 
-                cpa.dbconnect.GetWhereClauseForImages([image_key])))
-        cellids  = cpa.db.execute("""select %s from %s where %s""" % (
-                cpa.properties.object_id, cpa.properties.object_table, 
-                cpa.dbconnect.GetWhereClauseForImages([image_key])))
+        features = cpp.db.execute("""select %s from %s where %s""" % (
+                ','.join(self.colnames), cpp.properties.object_table, 
+                cpp.dbconnect.GetWhereClauseForImages([image_key])))
+        cellids  = cpp.db.execute("""select %s from %s where %s""" % (
+                cpp.properties.object_id, cpp.properties.object_table, 
+                cpp.dbconnect.GetWhereClauseForImages([image_key])))
         np.savez(filename, features=np.array(features, dtype=float), cellids=np.squeeze(np.array(cellids)))
 
     def _create_cache_counts(self, resume):
@@ -245,11 +245,11 @@ class Cache(object):
         """
         if resume and os.path.exists(self._counts_filename):
             return
-        result = cpa.db.execute("""select {0}, count(*) from {1} group by {0}""".format(
-                cpa.dbconnect.UniqueImageClause(), 
-                cpa.properties.object_table))
+        result = cpp.db.execute("""select {0}, count(*) from {1} group by {0}""".format(
+                cpp.dbconnect.UniqueImageClause(), 
+                cpp.properties.object_table))
         counts = np.array(result, dtype='i4')
-        with cpa.util.replace_atomically(self._counts_filename) as f:
+        with cpp.util.replace_atomically(self._counts_filename) as f:
             np.save(f, counts)
 
 
@@ -271,7 +271,7 @@ if __name__ == '__main__':
         parser.error('Incorrect number of arguments')
     properties_file, cache_dir, predicate = args
 
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
     _check_directory(cache_dir, options.resume)
 

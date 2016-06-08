@@ -11,16 +11,16 @@ from scipy.spatial.distance import cdist
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import pylab
-import cpa
+import cpp
 from .profiles import Profiles
 
 def plot_profiles(profiles, output_group_name=None):
     if output_group_name:
-        input_group_r, input_colnames = cpa.db.group_map(profiles.group_name, 
+        input_group_r, input_colnames = cpp.db.group_map(profiles.group_name, 
                                                          reverse=True)
         input_group_r = dict((tuple(map(str, k)), v) 
                              for k, v in input_group_r.items())
-        output_group, output_colnames = cpa.db.group_map(output_group_name)
+        output_group, output_colnames = cpp.db.group_map(output_group_name)
         d = {}
         labels = []
         for i, k in enumerate(profiles.keys()):
@@ -77,7 +77,7 @@ def parse_arguments():
 
 if __name__ == '__main__':
     options, (properties_file, input_filename, group_name) = parse_arguments()
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
     profiles = Profiles.load(input_filename)
     if options.standardize:
         profiles.data = profiles.data - profiles.data.mean(0)

@@ -7,9 +7,9 @@ import progressbar
 import numpy as np
 from scipy.stats.stats import scoreatpercentile
 from scipy.stats import norm as Gaussian
-import cpa
-import cpa.dbconnect
-import cpa.util
+import cpp
+import cpp.dbconnect
+import cpp.util
 
 logger = logging.getLogger(__name__)
 
@@ -84,10 +84,10 @@ class BaseNormalization(object):
     def _get_controls(self, predicate):
         """Return a dictionary mapping plate names to lists of control wells"""
         plates_and_images = {}
-        for row in cpa.db.execute("select distinct %s, %s from %s where %s"%
-                                  (cpa.properties.plate_id, 
-                                   ', '.join(cpa.dbconnect.image_key_columns()),
-                                   cpa.properties.image_table, predicate)):
+        for row in cpp.db.execute("select distinct %s, %s from %s where %s"%
+                                  (cpp.properties.plate_id, 
+                                   ', '.join(cpp.dbconnect.image_key_columns()),
+                                   cpp.properties.image_table, predicate)):
             plate = row[0]
             imKey = tuple(row[1:])
             plates_and_images.setdefault(plate, []).append(imKey)
@@ -258,9 +258,9 @@ if __name__ == '__main__':
         parser.error('Incorrect number of arguments')
     properties_file, cache_dir, predicate = args
 
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
-    from cpa.profiling.cache import Cache
+    from cpp.profiling.cache import Cache
     cache = Cache(cache_dir)
     normalizer = normalizations[options.method](cache)
     normalizer._create_cache(predicate)

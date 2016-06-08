@@ -1,8 +1,8 @@
 import sys
 from optparse import OptionParser
 import numpy as np
-import cpa
-from cpa.util import replace_atomically
+import cpp
+from cpp.util import replace_atomically
 from .profiles import Profiles
 
 def get_loadings(preprocessor):
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     if len(args) != 1:
         parser.error('Incorrect number of arguments')
     factor_model_file, = args
-    factor_model = cpa.util.unpickle1(factor_model_file)
+    factor_model = cpp.util.unpickle1(factor_model_file)
 
     loadings = get_loadings(factor_model)
 

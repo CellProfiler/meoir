@@ -5,7 +5,7 @@ See http://yatani.jp/HCIstats/FA
 
 from optparse import OptionParser
 import numpy as np
-from cpa.util import replace_atomically
+from cpp.util import replace_atomically
 from .profiles import Profiles
 
 def parse_arguments():

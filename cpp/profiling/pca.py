@@ -5,7 +5,7 @@ from optparse import OptionParser
 import progressbar
 import numpy as np
 import mdp.nodes as nodes
-import cpa.util
+import cpp.util
 from .cache import Cache
 from .preprocessing import Preprocessor, VariableSelector
 
@@ -44,7 +44,7 @@ class PCAPreprocessor(Preprocessor):
 def _main(args=None):
     # Import the module under its full name so the class can be found
     # when unpickling.
-    import cpa.profiling.pca
+    import cpp.profiling.pca
 
     logging.basicConfig(level=logging.DEBUG)
  
@@ -56,10 +56,10 @@ def _main(args=None):
     npcs = int(args[1])
     output_file = args[2]
 
-    subsample = cpa.util.unpickle1(subsample_file)
-    preprocessor = cpa.profiling.pca.PCAPreprocessor(
+    subsample = cpp.util.unpickle1(subsample_file)
+    preprocessor = cpp.profiling.pca.PCAPreprocessor(
         standardize(subsample.data), subsample.variables, npcs)
-    cpa.util.pickle(output_file, preprocessor)
+    cpp.util.pickle(output_file, preprocessor)
 
 if __name__ == '__main__':
     _main()

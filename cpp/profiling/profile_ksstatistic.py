@@ -4,10 +4,10 @@ def _compute_ksstatistic((cache_dir, images, control_images, normalization_name,
                           preprocess_file)):
     import numpy as np 
     import sys
-    import cpa
-    from cpa.profiling.cache import Cache
-    from cpa.profiling.normalization import normalizations
-    from cpa.profiling.ks_2samp import ks_2samp
+    import cpp
+    from cpp.profiling.cache import Cache
+    from cpp.profiling.normalization import normalizations
+    from cpp.profiling.ks_2samp import ks_2samp
 
     cache = Cache(cache_dir)
     normalization = normalizations[normalization_name]
@@ -16,7 +16,7 @@ def _compute_ksstatistic((cache_dir, images, control_images, normalization_name,
     assert len(control_data) >= len(normalizeddata)
     assert variables == control_colnames
     if preprocess_file:
-        preprocessor = cpa.util.unpickle1(preprocess_file)
+        preprocessor = cpp.util.unpickle1(preprocess_file)
         normalizeddata = preprocessor(normalizeddata)
         control_data = preprocessor(control_data)
         variables = preprocessor.variables
@@ -35,7 +35,7 @@ import csv
 import logging
 from optparse import OptionParser
 import numpy as np
-import cpa
+import cpp
 from .cache import Cache
 from .normalization import RobustLinearNormalization, normalizations
 from profiles import Profiles, add_common_options
@@ -45,20 +45,20 @@ logger = logging.getLogger(__name__)
         
 def images_by_plate(filter, plate_group=None):
     if plate_group is None:
-        return {None: cpa.db.execute(cpa.db.filter_sql(filter))}
+        return {None: cpp.db.execute(cpp.db.filter_sql(filter))}
     else:
-        plate_group_r, plate_colnames = cpa.db.group_map(plate_group, reverse=True, filter=filter)
+        plate_group_r, plate_colnames = cpp.db.group_map(plate_group, reverse=True, filter=filter)
 	return plate_group_r
 
 def profile_ksstatistic(cache_dir, group_name, control_filter, plate_group,
                         filter=None, parallel=Uniprocessing(),
                         normalization=RobustLinearNormalization, 
                         preprocess_file=None):
-    group, colnames_group = cpa.db.group_map(group_name, reverse=True, 
+    group, colnames_group = cpp.db.group_map(group_name, reverse=True, 
                                              filter=filter)
     control_images_by_plate = images_by_plate(control_filter, plate_group)
     plate_by_image = dict((row[:-2], tuple(row[-2:-1]))
-                          for row in cpa.db.GetPlatesAndWellsPerImage())
+                          for row in cpp.db.GetPlatesAndWellsPerImage())
 
     def control_images(treated_images):
         if plate_group is None:
@@ -73,7 +73,7 @@ def profile_ksstatistic(cache_dir, group_name, control_filter, plate_group,
                   for k in keys]
 
     if preprocess_file:
-        preprocessor = cpa.util.unpickle1(preprocess_file)
+        preprocessor = cpp.util.unpickle1(preprocess_file)
         variables = preprocessor.variables
     else:
         cache = Cache(cache_dir)
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         parser.error('Incorrect number of arguments')
     properties_file, cache_dir, group, control_filter = args
 
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
     profiles = profile_ksstatistic(cache_dir, group, control_filter, 
 				   options.plate_group,
                                    filter=options.filter, parallel=parallel,

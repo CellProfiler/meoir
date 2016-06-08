@@ -2,7 +2,7 @@ import numpy as np
 from numpy.testing import assert_almost_equal
 from unittest import TestCase
 from mock import patch, Mock, sentinel
-from cpa.profiling import pca
+from cpp.profiling import pca
 
 cars = np.array([[2930, 4099], [3350, 4749], [2640, 3799],
                  [3250, 4816], [4080, 7827]])
@@ -43,9 +43,9 @@ class PCAPreprocessorTestCase(TestCase):
         assert r == rv
         p.pca_node.execute.assert_called_once_with(d)
 
-@patch('cpa.util.pickle')
-@patch('cpa.util.unpickle1')
-@patch('cpa.profiling.pca.PCAPreprocessor')
+@patch('cpp.util.pickle')
+@patch('cpp.util.unpickle1')
+@patch('cpp.profiling.pca.PCAPreprocessor')
 def test_main(pclass, unpickle, pickle):
     p = Mock()
     pclass.return_value = p

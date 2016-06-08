@@ -5,7 +5,7 @@ from optparse import OptionParser
 import numpy as np
 from scipy.spatial.distance import cdist
 import pylab
-import cpa
+import cpp
 from .profiles import add_common_options
 from .preprocessing import NullPreprocessor
 from .cache import Cache, normalizations
@@ -27,14 +27,14 @@ if __name__ == '__main__':
     if preprocess_file is None:
         preprocessor = NullPreprocessor(normalization.colnames)
     else:
-        preprocessor = cpa.util.unpickle1(preprocess_file)
-    cpa.properties.LoadFile(properties_file)
+        preprocessor = cpp.util.unpickle1(preprocess_file)
+    cpp.properties.LoadFile(properties_file)
     cache = Cache(cache_dir)
 
     if options.filter:
-        image_keys = cpa.db.GetFilteredImages(options.filter)
+        image_keys = cpp.db.GetFilteredImages(options.filter)
     else:
-        image_keys = cpa.db.GetAllImageKeys()
+        image_keys = cpp.db.GetAllImageKeys()
 
     nfactors = len(preprocessor.variables)
     min_distances = np.ones(nfactors * nsteps) * np.inf

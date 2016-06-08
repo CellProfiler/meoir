@@ -3,8 +3,8 @@ import numpy as np
 from scipy.spatial.distance import pdist, cdist
 import pylab
 from .profiles import Profiles
-import cpa
-from cpa.util import auc
+import cpp
+from cpp.util import auc
 
 def compute_inter_intra_distances(profiles, true_group_name):
     label_map = profiles.regroup(true_group_name)
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     if len(args) != 3:
         parser.error('Incorrect number of arguments')
     properties_file, profiles_filename, true_group_name = args
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
 
     profiles = Profiles.load(profiles_filename)
 

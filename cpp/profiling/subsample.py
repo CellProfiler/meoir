@@ -16,8 +16,8 @@ import random
 import logging
 from optparse import OptionParser
 import numpy as np
-import cpa
-from cpa.util import replace_atomically
+import cpp
+from cpp.util import replace_atomically
 from .cache import Cache
 from .normalization import RobustLinearNormalization, normalizations
 from .parallel import ParallelProcessor, Uniprocessing
@@ -55,7 +55,7 @@ def make_count_cells_function(cache):
                                                     for k in image_keys))
 
 def organize_image_keys_per_group(image_keys, group):
-    group_mapping, colnames = cpa.db.group_map(group)
+    group_mapping, colnames = cpp.db.group_map(group)
     per_group = {}
     for image_key in image_keys:
         g = group_mapping[image_key]
@@ -79,9 +79,9 @@ class Subsample(object):
                  verbose):
         cache = Cache(self.cache_dir)
         if filter is None:
-            image_keys = cpa.db.GetAllImageKeys()
+            image_keys = cpp.db.GetAllImageKeys()
         else:
-            image_keys = cpa.db.GetFilteredImages(filter)
+            image_keys = cpp.db.GetFilteredImages(filter)
         count_cells = make_count_cells_function(cache)
         ncells = count_cells(image_keys)
         if sample_size is None:
@@ -157,12 +157,12 @@ def _parse_arguments():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     _parse_arguments()
-    cpa.properties.LoadFile(properties_file)
+    cpp.properties.LoadFile(properties_file)
     normalization = normalizations[options.normalization]
     # Import the module under its full name so the class can be found
     # when unpickling.
-    import cpa.profiling.subsample
-    subsample = cpa.profiling.subsample.Subsample(
+    import cpp.profiling.subsample
+    subsample = cpp.profiling.subsample.Subsample(
         cache_dir, sample_size, filter=options.filter, group=options.group,
         parallel=parallel, show_progress=options.progress, 
         verbose=options.verbose, normalization=normalization)
