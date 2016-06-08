@@ -1,0 +1,17 @@
+*.jar
+*~
+*.pyc
+*.pyd
+*.so
+*.dll
+*.exe
+*\#
+**/.DS_Store
+/build
+/dist
+output
+/cpa/_description.py
+/cpa/version.iss
+/images
+**/.idea
+.vscode
