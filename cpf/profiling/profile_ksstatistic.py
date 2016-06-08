@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
         
 def images_by_plate(filter, plate_group=None):
     if plate_group is None:
-        return {None: cpf.db.execute(cpp.db.filter_sql(filter))}
+        return {None: cpf.db.execute(cpf.db.filter_sql(filter))}
     else:
         plate_group_r, plate_colnames = cpf.db.group_map(plate_group, reverse=True, filter=filter)
 	return plate_group_r

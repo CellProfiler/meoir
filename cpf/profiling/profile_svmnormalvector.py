@@ -113,7 +113,7 @@ def images_by_plate(filter):
     for row in cpf.db.execute("""
         SELECT %s, %s FROM %s 
         WHERE substr(Image_Metadata_Well_DAPI from 2 for 2) IN ('02', '11')""" % (
-            cpf.dbconnect.UniqueImageClause(), cpp.properties.plate_id,
+            cpf.dbconnect.UniqueImageClause(), cpf.properties.plate_id,
             cpf.properties.image_table)):
         plate_name = row[-1]
         imkey = row[:-1]

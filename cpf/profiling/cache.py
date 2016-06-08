@@ -235,7 +235,7 @@ class Cache(object):
                 ','.join(self.colnames), cpf.properties.object_table, 
                 cpf.dbconnect.GetWhereClauseForImages([image_key])))
         cellids  = cpf.db.execute("""select %s from %s where %s""" % (
-                cpf.properties.object_id, cpp.properties.object_table, 
+                cpf.properties.object_id, cpf.properties.object_table, 
                 cpf.dbconnect.GetWhereClauseForImages([image_key])))
         np.savez(filename, features=np.array(features, dtype=float), cellids=np.squeeze(np.array(cellids)))
 
