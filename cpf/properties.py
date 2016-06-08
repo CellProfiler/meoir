@@ -707,7 +707,7 @@ if __name__ == "__main__":
         filename = sys.argv[1]
     else:
         #filename = "../properties/nirht_test.properties"
-        filename = '/Users/afraser/cpa_example/example.properties'
+        filename = '/Users/afraser/cpf_example/example.properties'
 
     p.load_file(filename)
     

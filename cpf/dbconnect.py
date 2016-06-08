@@ -370,7 +370,7 @@ class DBConnect(Singleton):
             self.connections[connID] = sqlite.connect(p.db_sqlite_file)
             self.connections[connID].text_factory = str
             self.cursors[connID] = self.connections[connID].cursor()
-            self.connectionInfo[connID] = ('sqlite', 'cpa_user', '', 'CPA_DB')
+            self.connectionInfo[connID] = ('sqlite', 'cpf_user', '', 'CPA_DB')
             self.connections[connID].create_function('greatest', -1, max)
             # Create MEDIAN function
             class median:
@@ -1885,7 +1885,7 @@ class Images(Entity):
     Easy access to images and their objects.
 
     # Get all objects treated with 10 uM nocodazole
-    >>> cpa.dbconnect.Images().filter(compound_name).where("cast(Image_LoadedText_Platemap as decimal) = 10").objects()
+    >>> cpf.dbconnect.Images().filter(compound_name).where("cast(Image_LoadedText_Platemap as decimal) = 10").objects()
     '''
 
     def __init__(self):
@@ -1966,6 +1966,6 @@ if __name__ == "__main__":
     import wx
     app = wx.PySimpleApp()
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    p.LoadFile('/Users/afraser/cpa_example/example.properties')
+    p.LoadFile('/Users/afraser/cpf_example/example.properties')
     
     app.MainLoop()

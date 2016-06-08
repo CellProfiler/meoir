@@ -1,4 +1,4 @@
-import cpa
+import cpf
 from dbconnect import *
 from properties import Properties
 from utils import Observable
@@ -434,8 +434,8 @@ class Filter(Expression):
 
 
 def get_tables_from_explain(sql_query):
-    rows = cpa.db.execute("EXPLAIN " + sql_query)
-    columns = cpa.db.GetResultColumnNames()
+    rows = cpf.db.execute("EXPLAIN " + sql_query)
+    columns = cpf.db.GetResultColumnNames()
     j = columns.index('table')
     return set(row[j] for row in rows)
 
@@ -482,6 +482,6 @@ def parse_old_group_query(group_query):
 if __name__ == "__main__":
     import wx
     app = wx.PySimpleApp()
-    p.LoadFile('/Users/afraser/cpa_example/example.properties')
+    p.LoadFile('/Users/afraser/cpf_example/example.properties')
 
     app.MainLoop()
