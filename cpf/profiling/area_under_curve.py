@@ -105,4 +105,4 @@ if __name__ == '__main__':
     print '-' * 25
     for (k, knn, rand) in zip(k_range, knn_accuracies, random_accuracies): 
 	print '%5d | %4.1f %% | %4.1f %%' % (k, rand * 100, knn * 100)
-    print 'mean difference is: %s' % np.mean(knn-rand)
+    print 'mean difference is: %s' % np.mean(knn_accuracies-random_accuracies)
